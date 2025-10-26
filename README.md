@@ -96,6 +96,17 @@ graph TB
 - **AI Services:** Google Vision API (OCR), Gemini 1.5 Pro (Evaluation)
 - **Deployment:** Vercel
 
+## Technical Deep Dive
+
+-   **Next.js App Router**: The project leverages the Next.js App Router for a modern, server-centric architecture. This allows for the use of Server Components to fetch data directly on the server, reducing client-side bundle sizes and improving performance. API routes are used to create a secure backend for handling file uploads, OCR processing, and AI evaluation requests.
+-   **Supabase Integration**: Supabase is used as a comprehensive backend-as-a-service solution.
+    -   **Database**: A PostgreSQL database stores user data, essay metadata, and evaluation results.
+    -   **Authentication**: Supabase's built-in authentication is used to manage user sign-up and login via Google OAuth. Row Level Security (RLS) policies are enforced to ensure that users can only access their own data.
+    -   **Storage**: Essay files (images and PDFs) are uploaded to a Supabase Storage bucket, providing a secure and scalable solution for file management.
+-   **AI Integration**:
+    -   **Google Vision API**: The OCR functionality is powered by the Google Vision API, which is called from a Next.js API route. The API's `DOCUMENT_TEXT_DETECTION` feature is used for its high accuracy in extracting text from images.
+    -   **Gemini Pro**: The AI evaluation is performed by the Gemini Pro model. A carefully crafted prompt is sent to the model, instructing it to analyze the essay based on the 5 official ENEM competencies and return a JSON object with the evaluation results. This structured data is then parsed and displayed on the frontend.
+
 ## Project Status
 
 This project was developed in distinct phases, with the core functionality now complete.
@@ -106,21 +117,26 @@ This project was developed in distinct phases, with the core functionality now c
 - [x] **Phase 4: File Upload System** - Essay submission with drag-and-drop.
 - [x] **Phase 5: OCR Integration** - Text extraction from images using Google Vision API.
 - [x] **Phase 6: AI Evaluation Engine** - Essay analysis and feedback generation with Gemini Pro.
-
-### Future Enhancements
-
-- [ ] **Phase 7: UI/UX Polish** - Further improvements to the user interface.
+- [x] **Phase 7: UI/UX Polish** - Further improvements to the user interface.
 - [ ] **Phase 8: Testing & QA** - Implementation of a comprehensive testing suite.
-- [ ] **Phase 9: Deployment** - Final preparations for a production environment.
+- [x] **Phase 9: Deployment** - Final preparations for a production environment.
+
+## Features in Detail
+
+-   **Authentication**: User sign-in is handled via Google OAuth, facilitated by Supabase's authentication service. The session is managed through cookies for persistent logins.
+-   **File Upload**: A drag-and-drop interface allows users to upload essay images or PDFs. The files are stored in a Supabase Storage bucket, and the file path is saved in the PostgreSQL database.
+-   **OCR Processing**: When a file is uploaded, a Next.js API route triggers the Google Vision API to perform OCR. The extracted text is then stored in the database.
+-   **AI Evaluation**: The user can request an evaluation from the essay details page. This action calls another API route that sends the transcribed text to the Gemini Pro API. The AI returns a detailed analysis based on the 5 ENEM competencies, which is then parsed and displayed to the user.
+-   **Dashboard**: The user dashboard fetches all submitted essays from the database and calculates statistics like the total number of essays and the average score.
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js >= 18.x
-- pnpm package manager
-- A Supabase account
-- A Google Cloud account (for Vision API and Gemini API)
+-   Node.js >= 18.x
+-   pnpm package manager
+-   A Supabase account
+-   A Google Cloud account (for Vision API and Gemini API)
 
 ### Setup Instructions
 
@@ -137,8 +153,12 @@ This project was developed in distinct phases, with the core functionality now c
     cp .env.local.example .env.local
     ```
 
-3.  **Set Up Supabase:**
-    Follow the detailed instructions in the [Supabase Setup Guide](./docs/SUPABASE_SETUP_GUIDE.md).
+3.  **Set Up Supabase and Google Cloud:**
+    Follow the detailed instructions in the setup guides:
+    -   [Supabase Setup Guide](./docs/setup/SUPABASE_SETUP_GUIDE.md)
+    -   [Google OAuth Setup](./docs/setup/GOOGLE_OAUTH_SETUP.md)
+    -   [Gemini API Setup](./docs/setup/GEMINI_SETUP.md)
+    -   [Database Setup](./docs/setup/DATABASE_SETUP.md)
 
 4.  **Run the Development Server:**
     ```bash
