@@ -53,33 +53,42 @@ export async function POST(request: NextRequest) {
     }
 
     // Process OCR
-    console.log('Starting OCR processing for essay:', essayId);
-    const transcription = await processEssayOCR(essayId, essay.image_url);
-    console.log('OCR completed, transcription length:', transcription.length);
+    console.log('Starting two-step OCR processing for essay:', essayId);
+    const { rawTranscription, reconstructedTranscription } =
+      await processEssayOCR(essayId, essay.image_url);
+    console.log('OCR and reconstruction completed.');
+    console.log('Raw transcription length:', rawTranscription.length);
+    console.log(
+      'Reconstructed transcription length:',
+      reconstructedTranscription.length
+    );
 
-    // Update essay with transcription directly in this route
-    console.log('Updating essay transcription in database...');
+    // Update essay with both transcriptions
+    console.log('Updating essay with raw and reconstructed transcriptions...');
     const { error: updateError } = await supabase
       .from('essays')
       .update({
-        transcription,
-        status: 'transcribed'
+        raw_transcription: rawTranscription, // Save the raw text
+        transcription: reconstructedTranscription, // Save the corrected text
+        status: 'transcribed',
       })
       .eq('id', essayId)
       .eq('user_id', user.id);
 
     if (updateError) {
       console.error('Update transcription error:', updateError);
-      throw new Error(`Failed to update transcription: ${updateError.message}`);
+      throw new Error(
+        `Failed to update transcription: ${updateError.message}`
+      );
     }
-    
+
     console.log('Database update completed successfully');
 
     return NextResponse.json(
       {
         success: true,
-        transcription,
-        message: 'Text extracted successfully',
+        transcription: reconstructedTranscription,
+        message: 'Text extracted and reconstructed successfully',
       },
       { status: 200 }
     );

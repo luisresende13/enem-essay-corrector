@@ -5,7 +5,7 @@ import { Essay } from '@/types';
 import EssayCard from './EssayCard';
 
 interface EssayListProps {
-  essays: Essay[];
+  essays: (Essay & { evaluation?: { overall_score: number } | null })[];
   onDelete?: (essayId: string) => void;
 }
 

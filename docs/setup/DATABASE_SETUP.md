@@ -11,6 +11,14 @@ This document contains all SQL scripts needed to set up the Supabase database fo
 
 ---
 
+## Migrations
+
+After the initial setup, apply any migrations from the `docs/migrations` directory in numerical order.
+
+- **[001_ADD_RAW_TRANSCRIPTION.md](../migrations/001_ADD_RAW_TRANSCRIPTION.md)**
+
+---
+
 ## 1. Enable UUID Extension
 
 ```sql

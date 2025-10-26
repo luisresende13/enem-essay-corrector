@@ -10,10 +10,14 @@ import { ptBR } from 'date-fns/locale';
 async function getEssayStats(userId: string) {
   const supabase = await createClient();
 
-  // Get all essays for the user
-  const { data: essays, error } = await supabase
+  const { data, error } = await supabase
     .from('essays')
-    .select('*')
+    .select(`
+      *,
+      evaluations (
+        overall_score
+      )
+    `)
     .eq('user_id', userId)
     .order('created_at', { ascending: false });
 
@@ -27,29 +31,24 @@ async function getEssayStats(userId: string) {
     };
   }
 
-  // Get evaluations for essays
-  const essayIds = essays?.map((e) => e.id) || [];
-  let averageScore = null;
+  const essays = data.map(essay => ({
+    ...essay,
+    // @ts-ignore
+    evaluation: Array.isArray(essay.evaluations) ? essay.evaluations[0] : essay.evaluations,
+  }));
 
-  if (essayIds.length > 0) {
-    const { data: evaluations } = await supabase
-      .from('evaluations')
-      .select('overall_score')
-      .in('essay_id', essayIds);
+  const evaluatedEssays = essays.filter(e => e.evaluation);
+  const averageScore = evaluatedEssays.length > 0
+    ? Math.round(evaluatedEssays.reduce((sum, e) => sum + (e.evaluation?.overall_score || 0), 0) / evaluatedEssays.length)
+    : null;
 
-    if (evaluations && evaluations.length > 0) {
-      const totalScore = evaluations.reduce((sum, e) => sum + e.overall_score, 0);
-      averageScore = Math.round(totalScore / evaluations.length);
-    }
-  }
-
-  const lastEssayDate = essays && essays.length > 0 ? essays[0].created_at : null;
+  const lastEssayDate = essays.length > 0 ? essays[0].created_at : null;
 
   return {
-    totalEssays: essays?.length || 0,
+    totalEssays: essays.length,
     averageScore,
     lastEssayDate,
-    essays: essays || [],
+    essays: essays,
   };
 }
 

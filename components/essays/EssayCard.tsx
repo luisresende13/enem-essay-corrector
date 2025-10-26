@@ -7,7 +7,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 interface EssayCardProps {
-  essay: Essay;
+  essay: Essay & { evaluation?: { overall_score: number } | null };
   onDelete?: (essayId: string) => void;
 }
 
@@ -67,7 +67,17 @@ export default function EssayCard({ essay, onDelete }: EssayCardProps) {
             </span>
           </div>
 
-          <p className="text-sm text-gray-500 mb-4">{timeAgo}</p>
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-sm text-gray-500">{timeAgo}</p>
+            {essay.status === 'evaluated' && essay.evaluation && (
+              <div className="flex items-center">
+                <span className="text-sm font-semibold text-gray-900">
+                  {essay.evaluation.overall_score}
+                </span>
+                <span className="text-xs text-gray-500">/1000</span>
+              </div>
+            )}
+          </div>
 
           {/* Actions */}
           <div className="flex items-center justify-between pt-4 border-t border-gray-100">

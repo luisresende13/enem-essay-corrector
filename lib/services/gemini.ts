@@ -180,6 +180,72 @@ function validateEvaluationResult(result: any): asserts result is GeminiEvaluati
   }
 }
 
+const RECONSTRUCTION_PROMPT = `
+Você é um especialista em corrigir e reconstruir redações manuscritas em português do Brasil a partir de uma transcrição OCR imperfeita. Sua tarefa é corrigir erros comuns de OCR, como caracteres incorretos, palavras unidas ou separadas indevidamente e espaçamento inconsistente, preservando a voz e a intenção original do autor. Não adicione nem remova conteúdo. Retorne apenas o texto corrigido, sem qualquer outra formatação ou texto introdutório.
+
+Transcrição OCR com falhas:
+"""
+{raw_text}
+"""
+
+Redação Corrigida:
+`;
+
+/**
+ * Reconstructs and corrects a raw OCR transcription using Gemini
+ * @param rawText - The flawed text from the initial OCR process
+ * @returns The corrected and reconstructed essay text
+ */
+export async function reconstructTranscription(rawText: string): Promise<string> {
+  if (!process.env.GEMINI_API_KEY) {
+    throw new Error('GEMINI_API_KEY is not configured');
+  }
+
+  if (!rawText || rawText.trim().length < 20) {
+    // Return original text if it's too short to be worth processing
+    return rawText;
+  }
+
+  try {
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-2.5-pro',
+      generationConfig: {
+        temperature: 0.2, // Lower temperature for more deterministic correction
+        maxOutputTokens: 8192,
+      },
+    });
+
+    const prompt = RECONSTRUCTION_PROMPT.replace('{raw_text}', rawText);
+
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+
+    // Check for safety blocks or other issues
+    if (response.promptFeedback?.blockReason) {
+      console.warn(
+        `Gemini reconstruction was blocked. Reason: ${response.promptFeedback.blockReason}`
+      );
+      console.warn('Falling back to raw OCR text.');
+      return rawText; // Fallback to original text
+    }
+
+    const correctedText = response.text()?.trim();
+
+    if (!correctedText) {
+      console.warn(
+        'Gemini returned an empty response for reconstruction. Falling back to raw OCR text.'
+      );
+      return rawText; // Fallback to original text
+    }
+
+    return correctedText;
+  } catch (error) {
+    console.error('An unexpected error occurred during Gemini reconstruction:', error);
+    console.warn('Falling back to raw OCR text due to error.');
+    return rawText; // Fallback on any other error
+  }
+}
+
 /**
  * Calculates overall score from competency scores
  */

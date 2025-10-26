@@ -5,7 +5,7 @@ import { Essay } from '@/types';
 import EssayList from './EssayList';
 
 interface EssayListClientProps {
-  essays: Essay[];
+  essays: (Essay & { evaluation?: { overall_score: number } | null })[];
 }
 
 export default function EssayListClient({ essays }: EssayListClientProps) {

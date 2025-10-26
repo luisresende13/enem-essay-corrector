@@ -5,6 +5,7 @@
 
 import { ImageAnnotatorClient } from '@google-cloud/vision';
 import type { google } from '@google-cloud/vision/build/protos/protos';
+import { reconstructTranscription } from '@/lib/services/gemini';
 
 interface OCRResult {
   text: string;
@@ -141,24 +142,33 @@ export async function extractTextFromImage(
 }
 
 /**
- * Process OCR for an essay
+ * Process OCR for an essay using a two-step approach:
+ * 1. Extract raw text with Google Vision
+ * 2. Reconstruct and correct the text with Gemini
  * @param essayId - The essay ID
  * @param imageUrl - Public URL of the essay image
- * @returns Extracted text
+ * @returns Both the raw and the reconstructed (corrected) transcriptions
  */
 export async function processEssayOCR(
   essayId: string,
   imageUrl: string
-): Promise<string> {
+): Promise<{ rawTranscription: string; reconstructedTranscription: string }> {
   try {
-    // Extract text from image
-    const result = await extractTextFromImage(imageUrl);
-
-    if (!result.text) {
+    // Step 1: Get raw transcription from Google Vision
+    const ocrResult = await extractTextFromImage(imageUrl);
+    if (!ocrResult.text) {
       throw new Error('No text extracted from image');
     }
+    const rawTranscription = ocrResult.text;
 
-    return result.text;
+    // Step 2: Reconstruct the text using Gemini
+    console.log(`Starting Gemini reconstruction for essay ${essayId}...`);
+    const reconstructedTranscription = await reconstructTranscription(
+      rawTranscription
+    );
+    console.log(`Gemini reconstruction finished for essay ${essayId}.`);
+
+    return { rawTranscription, reconstructedTranscription };
   } catch (error) {
     console.error(`OCR processing error for essay ${essayId}:`, error);
     throw error;
