@@ -61,9 +61,9 @@ graph TB
     end
 
     subgraph "API Layer - Next.js"
-        B[/api/upload]
-        C[/api/ocr]
-        D[/api/evaluate]
+        B["/api/upload"]
+        C["/api/ocr"]
+        D["/api/evaluate"]
     end
 
     subgraph "External Services"
