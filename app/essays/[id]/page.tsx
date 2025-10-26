@@ -69,48 +69,39 @@ export default async function EssayDetailPage({ params }: PageProps) {
   const evaluation = essay.status === 'evaluated' ? await getEvaluation(id) : null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link
-                href="/dashboard"
-                className="text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                  />
-                </svg>
-              </Link>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  Detalhes da Redação
-                </h1>
-                <p className="text-sm text-gray-600">
-                  Visualize e gerencie sua redação
-                </p>
-              </div>
-            </div>
-            <LogoutButton variant="minimal" />
-          </div>
+    <div className="bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Page Header with Back Button */}
+        <div className="mb-6">
+          <Link
+            href="/dashboard"
+            className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-700 transition-colors font-medium mb-4"
+          >
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
+            </svg>
+            Voltar para Dashboard
+          </Link>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Detalhes da Redação
+          </h1>
+          <p className="text-gray-600 mt-1">
+            Visualize e gerencie sua redação
+          </p>
         </div>
-      </header>
 
-      {/* Main Content */}
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <EssayDetailClient essay={essay} evaluation={evaluation} />
-      </main>
+      </div>
     </div>
   );
 }

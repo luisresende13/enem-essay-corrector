@@ -58,46 +58,37 @@ export default async function EvaluationPage({ params }: PageProps) {
   const { essay, evaluation } = data;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 print:bg-white">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 shadow-sm print:hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link
-                href={`/essays/${id}`}
-                className="text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                  />
-                </svg>
-              </Link>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  Resultado da Avaliação
-                </h1>
-                <p className="text-sm text-gray-600">{essay.title}</p>
-              </div>
-            </div>
-            <LogoutButton variant="minimal" />
-          </div>
+    <div className="bg-gradient-to-br from-blue-50 to-indigo-100 print:bg-white">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 print:py-4">
+        {/* Page Header with Back Button */}
+        <div className="mb-6 print:hidden">
+          <Link
+            href={`/essays/${id}`}
+            className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-700 transition-colors font-medium mb-4"
+          >
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
+            </svg>
+            Voltar para Redação
+          </Link>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Resultado da Avaliação
+          </h1>
+          <p className="text-gray-600 mt-1">{essay.title}</p>
         </div>
-      </header>
 
-      {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 print:py-4">
-        <EvaluationDisplay evaluation={evaluation} />
-      </main>
+        <EvaluationDisplay evaluation={evaluation} essay={essay} />
+      </div>
     </div>
   );
 }

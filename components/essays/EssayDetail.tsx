@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
 import { Essay, Evaluation } from '@/types';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -62,7 +63,7 @@ export default function EssayDetail({
       }
     } catch (error) {
       console.error('Error deleting essay:', error);
-      alert('Erro ao excluir redação. Tente novamente.');
+      toast.error('Erro ao excluir redação. Tente novamente.');
     } finally {
       setIsDeleting(false);
     }
@@ -76,7 +77,7 @@ export default function EssayDetail({
       }
     } catch (error) {
       console.error('Error processing OCR:', error);
-      alert('Erro ao processar OCR. Tente novamente.');
+      toast.error('Erro ao processar OCR. Tente novamente.');
     } finally {
       setIsProcessingOCR(false);
     }
@@ -90,7 +91,7 @@ export default function EssayDetail({
       }
     } catch (error) {
       console.error('Error evaluating essay:', error);
-      alert('Erro ao avaliar redação. Tente novamente.');
+      toast.error('Erro ao avaliar redação. Tente novamente.');
     } finally {
       setIsEvaluating(false);
     }
@@ -241,7 +242,7 @@ export default function EssayDetail({
       {/* Evaluation Results */}
       {evaluation && (
         <div className="mt-6">
-          <EvaluationDisplay evaluation={evaluation} />
+          <EvaluationDisplay evaluation={evaluation} essay={essay} />
         </div>
       )}
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 import { Essay } from '@/types';
 import EssayList from './EssayList';
 
@@ -21,11 +22,12 @@ export default function EssayListClient({ essays }: EssayListClientProps) {
         throw new Error('Failed to delete essay');
       }
 
+      toast.success('Redação excluída com sucesso!');
       // Refresh the page to update the list
       router.refresh();
     } catch (error) {
       console.error('Error deleting essay:', error);
-      alert('Erro ao excluir redação. Tente novamente.');
+      toast.error('Erro ao excluir redação. Tente novamente.');
     }
   };
 

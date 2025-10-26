@@ -1,11 +1,13 @@
 "use client";
 
-import { Evaluation } from '@/types';
+import { Evaluation, Essay } from '@/types';
 import ScoreSummary from './ScoreSummary';
 import CompetencyCard from './CompetencyCard';
+import Image from 'next/image';
 
 interface EvaluationDisplayProps {
   evaluation: Evaluation;
+  essay: Essay;
 }
 
 // ENEM Competencies descriptions
@@ -42,7 +44,7 @@ const COMPETENCIES = [
   },
 ];
 
-export default function EvaluationDisplay({ evaluation }: EvaluationDisplayProps) {
+export default function EvaluationDisplay({ evaluation, essay }: EvaluationDisplayProps) {
   // Prepare competencies data
   const competencies = COMPETENCIES.map((comp) => ({
     ...comp,
@@ -52,6 +54,43 @@ export default function EvaluationDisplay({ evaluation }: EvaluationDisplayProps
 
   return (
     <div className="max-w-6xl mx-auto">
+      {/* Side-by-Side View: Original Essay and Transcription */}
+      <div className="mb-8 bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
+          <h2 className="text-2xl font-bold text-white">Redação Original e Transcrição</h2>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
+          {/* Left Column: Original Essay Image */}
+          <div className="space-y-3">
+            <h3 className="text-lg font-semibold text-gray-900">Imagem Original</h3>
+            <div className="relative border-2 border-gray-200 rounded-lg overflow-hidden bg-gray-50">
+              <Image
+                src={essay.image_url}
+                alt="Redação original"
+                width={800}
+                height={1200}
+                className="w-full h-auto"
+                priority
+              />
+            </div>
+          </div>
+
+          {/* Right Column: Transcription */}
+          <div className="space-y-3">
+            <h3 className="text-lg font-semibold text-gray-900">Transcrição</h3>
+            <div className="border-2 border-gray-200 rounded-lg p-4 bg-gray-50 h-full overflow-y-auto max-h-[600px]">
+              {essay.transcription ? (
+                <p className="text-gray-800 leading-relaxed whitespace-pre-line text-sm">
+                  {essay.transcription}
+                </p>
+              ) : (
+                <p className="text-gray-500 italic">Transcrição não disponível</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Score Summary */}
       <ScoreSummary
         overallScore={evaluation.overall_score}

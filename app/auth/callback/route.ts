@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { addSampleEssaysToUser } from '@/lib/services/samples';
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
@@ -30,8 +31,36 @@ export async function GET(request: Request) {
         );
       }
 
-      if (data.session) {
-        // Successfully authenticated
+      if (data.user && data.session) {
+        // Check if a user profile already exists
+        const { data: profile, error: profileError } = await supabase
+          .from('user_profiles')
+          .select('id')
+          .eq('id', data.user.id)
+          .maybeSingle();
+
+        // If no profile exists, this is the user's first login.
+        if (!profile && !profileError) {
+          // Create a new user profile
+          const { error: insertError } = await supabase.from('user_profiles').insert({
+            id: data.user.id,
+            full_name: data.user.user_metadata.full_name,
+            avatar_url: data.user.user_metadata.avatar_url,
+          });
+
+          if (insertError) {
+            console.error('Error creating user profile:', insertError);
+          } else {
+            // Add sample essays for the new user
+            try {
+              await addSampleEssaysToUser(supabase, data.user.id);
+            } catch (sampleError) {
+              console.error('Failed to add sample essays for new user:', sampleError);
+            }
+          }
+        }
+        
+        // Successfully authenticated, redirect to dashboard
         return NextResponse.redirect(`${origin}/dashboard`);
       }
     } catch (err) {

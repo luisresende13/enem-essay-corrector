@@ -6,6 +6,7 @@ import LogoutButton from '@/components/auth/LogoutButton';
 import EssayListClient from '@/components/essays/EssayListClient';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { addSampleEssaysToUser } from '@/lib/services/samples';
 
 async function getEssayStats(userId: string) {
   const supabase = await createClient();
@@ -65,26 +66,8 @@ export default async function DashboardPage() {
   const stats = await getEssayStats(user.id);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                ENEM Essay Corrector
-              </h1>
-              <p className="text-sm text-gray-600">
-                Correção inteligente de redações
-              </p>
-            </div>
-            <LogoutButton variant="minimal" />
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-6">
           {/* Welcome Section */}
           <div className="bg-white rounded-lg shadow-md p-6">
@@ -239,7 +222,7 @@ export default async function DashboardPage() {
             </div>
           )}
         </div>
-      </main>
+      </div>
     </div>
   );
 }
