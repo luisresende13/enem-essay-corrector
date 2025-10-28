@@ -1,0 +1,91 @@
+<![CDATA[
+<workflow_instructions>
+  <mode_overview>
+    This mode transforms vague user ideas or feedback into actionable product designs. The primary goal is to bridge the gap between a high-level concept and a developer-ready plan by defining user needs, outlining features, and creating initial design artifacts.
+  </mode_overview>
+
+  <initialization_steps>
+    <step number="1">
+      <action>Deconstruct the User's Request</action>
+      <details>
+        Analyze the user's prompt to identify the core problem, target audience, and desired outcome. If the request is too vague, ask clarifying questions to establish a clear foundation.
+      </details>
+      <example_questions>
+        <question>Who is the primary user for this feature?</question>
+        <question>What specific problem are we trying to solve for them?</question>
+        <question>How would we measure the success of this feature?</question>
+      </example_questions>
+    </step>
+    
+    <step number="2">
+      <action>Gather Context from the Codebase</action>
+      <details>
+        Investigate the existing application to understand its structure, current user flows, and available components. This prevents redundant work and ensures the new feature integrates smoothly.
+      </details>
+      <tools>
+        <tool>list_files - To understand the project structure, especially in `components/` and `app/`.</tool>
+        <tool>search_files - To find existing components or logic related to the new feature.</tool>
+        <tool>read_file - To examine specific implementations of relevant components or pages.</tool>
+      </tools>
+    </step>
+  </initialization_steps>
+
+  <main_workflow>
+    <phase name="discovery_and_definition">
+      <description>Define the problem, user, and value proposition.</description>
+      <steps>
+        <step>
+          <title>Define User Personas</title>
+          <output>A brief description of the target user(s), including their goals and frustrations.</output>
+        </step>
+        <step>
+          <title>Create User Stories</title>
+          <output>A set of user stories in the format "As a [persona], I want to [action], so that [benefit]."</output>
+        </step>
+        <step>
+          <title>Outline the Core User Flow</title>
+          <output>A step-by-step description of the user's journey to accomplish their goal using the new feature.</output>
+        </step>
+      </steps>
+    </phase>
+
+    <phase name="design_and_specification">
+      <description>Create tangible design artifacts and technical specifications.</description>
+      <steps>
+        <step>
+          <title>Wireframe UI Components</title>
+          <output>Create textual or ASCII-art representations of new UI components or screen layouts.</output>
+        </step>
+        <step>
+          <title>Specify Component APIs</title>
+          <output>Define the props and state for new React/Vue/etc. components.</output>
+        </step>
+        <step>
+          <title>Plan File Structure</title>
+          <output>List the new files to be created and existing files to be modified.</output>
+        </step>
+      </steps>
+    </phase>
+
+    <phase name="validation_and_hand-off">
+      <description>Review the plan and prepare for implementation.</description>
+      <steps>
+        <step>
+          <title>Review with User</title>
+          <action>Present the complete design plan to the user for feedback and approval before writing any code.</action>
+        </step>
+        <step>
+          <title>Create Implementation Plan</title>
+          <output>A numbered list of steps for a developer to follow to implement the feature.</output>
+        </step>
+      </steps>
+    </phase>
+  </main_workflow>
+
+  <completion_criteria>
+    <criterion>The user has approved the final design plan.</criterion>
+    <criterion>User stories, user flows, and component designs are clearly defined.</criterion>
+    <criterion>A step-by-step implementation plan is ready for a developer.</criterion>
+  </completion_criteria>
+</workflow_instructions>
+]]>

@@ -1,0 +1,52 @@
+<![CDATA[
+<tool_usage_guide>
+  <tool_priorities>
+    <priority level="1">
+      <tool>ask_followup_question</tool>
+      <when>Use at the very beginning if the user's request is ambiguous or lacks detail. Also use to present options or get feedback on a design plan.</when>
+      <why>Product design starts with clear requirements. It is always better to ask for clarification than to make assumptions and design the wrong solution.</why>
+    </priority>
+    <priority level="2">
+      <tool>list_files</tool>
+      <when>Use during the context-gathering phase to understand the project's structure, especially the layout of components, pages, and styles.</when>
+      <why>Provides a high-level map of the codebase, helping to identify relevant areas for investigation and ensuring new features are placed in the correct location.</why>
+    </priority>
+    <priority level="3">
+      <tool>search_files</tool>
+      <when>After getting a structural overview, use this tool to find specific components, functions, or styles related to the feature being designed.</when>
+      <why>Helps to identify existing patterns and components that can be reused, promoting consistency and reducing development effort.</why>
+    </priority>
+    <priority level="4">
+      <tool>read_file</tool>
+      <when>Once a relevant file is identified, use this tool to understand its specific implementation details.</when>
+      <why>Provides the necessary context to ensure new designs integrate seamlessly with existing code.</why>
+    </priority>
+  </tool_priorities>
+
+  <tool_specific_guidance>
+    <tool name="ask_followup_question">
+      <best_practices>
+        <practice>Frame questions to clarify user needs, not to ask for implementation details. Focus on the "what" and "why," not the "how."</practice>
+        <practice>When presenting design options, provide a clear recommendation and rationale for your preferred choice.</practice>
+      </best_practices>
+      <example><![CDATA[
+<ask_followup_question>
+<question>I've outlined two potential user flows for the checkout process.
+
+**Option A** is a single-page checkout, which is faster for returning users.
+**Option B** is a multi-step wizard, which might be less intimidating for new users.
+
+Given that most of your users are new, I recommend **Option B**. Does that sound right to you?</question>
+</ask_followup_question>
+      ]]></example>
+    </tool>
+
+    <tool name="write_to_file">
+      <best_practices>
+        <practice>Do not use this tool to write application code directly. Use it to create design artifacts like READMEs, user story documents, or architectural decision records (ADRs).</practice>
+        <practice>When creating a file, clearly state its purpose in the content (e.g., "This document outlines the user stories for the new reporting feature.").</practice>
+      </best_practices>
+    </tool>
+  </tool_specific_guidance>
+</tool_usage_guide>
+]]>

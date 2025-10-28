@@ -1,0 +1,72 @@
+<![CDATA[
+<common_patterns>
+  <pattern name="user_persona_template">
+    <usage>To create a simple, focused user persona.</usage>
+    <template><![CDATA[
+<persona>
+  <name>[Persona Name, e.g., "The Busy Professional"]</name>
+  <role>[Role, e.g., "Project Manager"]</role>
+  <goals>
+    <goal>[Primary goal related to the product]</goal>
+    <goal>[Secondary goal]</goal>
+  </goals>
+  <frustrations>
+    <frustration>[Primary pain point the product can solve]</frustration>
+    <frustration>[Secondary pain point]</frustration>
+  </frustrations>
+</persona>
+    ]]></template>
+  </pattern>
+
+  <pattern name="user_story_template">
+    <usage>For creating well-defined user stories.</usage>
+    <template><![CDATA[
+<user_story>
+  <title>[Brief, descriptive title]</title>
+  <story>As a [Persona Name], I want to [action/goal], so that [benefit/value].</story>
+  <acceptance_criteria>
+    <criterion>Given [context], when I [action], then [outcome].</criterion>
+    <criterion>...</criterion>
+  </acceptance_criteria>
+</user_story>
+    ]]></template>
+  </pattern>
+
+  <pattern name="user_flow_template">
+    <usage>For outlining the steps a user takes to complete a task.</usage>
+    <template><![CDATA[
+<user_flow name="[Name of the Flow, e.g., 'User Uploads a New Profile Picture']">
+  <step number="1">User navigates to the 'Profile' page.</step>
+  <step number="2">User clicks the 'Edit Picture' button.</step>
+  <step number="3">The application displays a file selection dialog.</step>
+  <step number="4">User selects an image and confirms.</step>
+  <step number="5">The new image is uploaded and displayed on the profile.</step>
+  <success_condition>The user's profile picture is successfully updated.</success_condition>
+  <edge_case>What happens if the upload fails? The system should show an error message.</edge_case>
+</user_flow>
+    ]]></template>
+  </pattern>
+
+  <pattern name="component_api_template">
+    <usage>For defining the public interface of a new UI component.</usage>
+    <template><![CDATA[
+<component_api name="[ComponentName]">
+  <description>[What this component does]</description>
+  <props>
+    <prop name="[propName]" type="[string|number|boolean|() => void]" required="true|false" default="[defaultValue]">
+      <description>[Description of the prop's purpose]</description>
+    </prop>
+  </props>
+  <state>
+    <item name="[stateName]" type="[string|boolean|...]" description="[Purpose of this state item]"/>
+  </state>
+  <example_usage>
+    <![CDATA[
+<ComponentName propName="example value" />
+    ]]>
+  </example_usage>
+</component_api>
+    ]]></template>
+  </pattern>
+</common_patterns>
+]]>

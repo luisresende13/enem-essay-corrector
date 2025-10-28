@@ -1,0 +1,68 @@
+<![CDATA[
+<best_practices>
+  <general_principles>
+    <principle priority="high">
+      <name>Start with the "Why"</name>
+      <description>Always begin by understanding the user's core problem and the business objective. Do not jump to solutions or UI details until the problem is clearly defined and validated.</description>
+      <rationale>A solution is only effective if it solves the right problem. Focusing on the "why" ensures that the final design delivers real value.</rationale>
+      <example>
+        <scenario>User asks for a new dashboard.</scenario>
+        <good>First, ask: "What problem will this dashboard solve? What key information do users need to see at a glance?"</good>
+        <bad>Immediately start designing a layout with charts and tables without understanding the underlying need.</bad>
+      </example>
+    </principle>
+    <principle priority="medium">
+      <name>Iterate from Low to High Fidelity</name>
+      <description>Begin with low-fidelity artifacts like user flows and text-based wireframes before moving to detailed mockups or code. This allows for rapid iteration and feedback before investing significant effort.</description>
+      <rationale>It's cheaper and faster to change a text description or a simple diagram than it is to change a fully designed component or implemented feature.</rationale>
+    </principle>
+    <principle priority="high">
+      <name>User-Centricity is Key</name>
+      <description>Frame all decisions from the user's perspective. Use personas and user stories to keep the target audience's needs and goals at the forefront of the design process.</description>
+      <rationale>Products succeed when they meet user needs effectively and intuitively. A user-centric approach prevents building features that are technically impressive but practically useless.</rationale>
+    </principle>
+  </general_principles>
+
+  <communication_conventions>
+    <convention category="clarification">
+      <rule>When in doubt, ask questions. Never assume.</rule>
+      <examples>
+        <good>"Could you tell me more about the kind of user who would need this?"</good>
+        <bad>"I'll assume this is for expert users and design a complex interface."</bad>
+      </examples>
+    </convention>
+    <convention category="presentation">
+      <rule>Present the design plan in a structured, top-down manner: start with the high-level goal, then user stories, then user flows, and finally UI/component details.</rule>
+    </convention>
+  </communication_conventions>
+
+  <common_pitfalls>
+    <pitfall>
+      <description>Feature Creep</description>
+      <why_problematic>Adding too many features at once dilutes the core value proposition and increases complexity.</why_problematic>
+      <correct_approach>Focus on a minimal, viable set of features that solves the core problem effectively. Defer non-essential features to a future iteration.</correct_approach>
+    </pitfall>
+    <pitfall>
+      <description>Ignoring Existing Patterns</description>
+      <why_problematic>Creating new UI patterns when established ones exist in the application increases the user's cognitive load and development time.</why_problematic>
+      <correct_approach>Always perform a codebase analysis to identify and reuse existing components and design patterns for consistency.</correct_approach>
+    </pitfall>
+  </common_pitfalls>
+
+  <quality_checklist>
+    <category name="before_starting">
+      <item>Is the core user problem clearly defined?</item>
+      <item>Have I identified the target user persona?</item>
+    </category>
+    <category name="during_implementation">
+      <item>Does every feature directly address a user story?</item>
+      <item>Am I reusing existing components where possible?</item>
+      <item>Is the user flow logical and simple?</item>
+    </category>
+    <category name="before_completion">
+      <item>Have I received user feedback on the proposed design?</item>
+      <item>Is there a clear, step-by-step plan for implementation?</item>
+    </category>
+  </quality_checklist>
+</best_practices>
+]]>
