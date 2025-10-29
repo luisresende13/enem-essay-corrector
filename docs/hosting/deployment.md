@@ -1,214 +1,116 @@
-# Deployment Guide: Enem Essay Corrector
+# Deployment Guide: Enem Essay Corrector (Static)
 
-This guide documents the process of deploying the Enem Essay Corrector application to a Google Cloud VM instance.
+This guide provides comprehensive instructions for deploying the **Enem Essay Corrector** application as a static site on a custom Ubuntu server using NGINX. This is the recommended approach for its simplicity and performance.
 
 ## 1. Prerequisites
 
--   A Google Cloud Platform account with a configured VM instance.
--   `gcloud` CLI installed and authenticated on your local machine.
--   `pnpm` installed on your local machine.
+- **Ubuntu Server**: A server with Ubuntu 20.04 or later.
+- **Domain/Subdomain**: A registered domain or subdomain pointing to your server's IP address.
+- **Node.js**: Version 18.x or later for the build process.
+- **pnpm**: For dependency management.
+- **NGINX**: Installed on your server.
+- **Certbot**: For obtaining and managing SSL certificates.
 
-## 2. Build the Application
+## 2. Build and Deployment Steps
 
-First, build the Next.js application locally to ensure there are no build errors:
+### 2.1. Build the Application Locally
 
-```bash
-cd enem-essay-corrector
-pnpm build
-```
-
-## 3. Server Setup
-
-Connect to your VM instance and prepare the server for deployment.
-
-### 3.1. Connect to the Server
+First, build the application on your local machine. This process embeds the necessary environment variables into the static files.
 
 ```bash
-gcloud compute ssh cpd-niteroi-proxy
-```
-
-### 3.2. Install Nginx
-
-Install the Nginx web server:
-
-```bash
-sudo apt-get update && sudo apt-get install -y nginx
-```
-
-### 3.3. Create Application Directory
-
-Create a directory to host the application files:
-
-```bash
-sudo mkdir -p /var/www/enem.octacity.org && sudo chown -R $(whoami):$(whoami) /var/www/enem.octacity.org
-```
-
-### 3.4. Install Node.js, pm2, and pnpm
-
-Install `nvm` (Node Version Manager) to manage Node.js versions, then install the latest LTS version of Node.js, `pm2` to keep the application running, and `pnpm`:
-
-```bash
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-nvm install --lts
-npm install -g pm2
-npm install -g pnpm
-```
-
-## 4. Deploy Application Files
-
-Package the application files and copy them to the server.
-
-### 4.1. Create a Tarball
-
-Create a compressed archive of the application, excluding the `.next` and `node_modules` directories:
-
-```bash
-tar --exclude=".next" --exclude="node_modules" -czvf enem-essay-corrector.tar.gz enem-essay-corrector
-```
-
-### 4.2. Copy to Server
-
-Copy the tarball to the server:
-
-```bash
-gcloud compute scp enem-essay-corrector.tar.gz cpd-niteroi-proxy:/var/www/enem.octacity.org
-```
-
-### 4.3. Extract on Server
-
-Extract the tarball on the server and remove the archive file:
-
-```bash
-cd /var/www/enem.octacity.org
-tar --strip-components=1 -xzvf enem-essay-corrector.tar.gz
-rm enem-essay-corrector.tar.gz
-```
-
-## 5. Install Dependencies
-
-Install the application dependencies on the server:
-
-```bash
-cd /var/www/enem.octacity.org
-export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+# Ensure your .env.local is configured with production keys
 pnpm install
-```
-
-## 6. Increase Swap Space
-
-If the server has limited memory, you may need to increase the swap space to prevent the build process from failing.
-
-```bash
-sudo swapoff /swapfile
-sudo rm /swapfile
-sudo fallocate -l 4G /swapfile
-sudo chmod 600 /swapfile
-sudo mkswap /swapfile
-sudo swapon /swapfile
-echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
-```
-
-## 7. Configure Environment
-
-Create a `.env.local` file in the application's root directory on the server and add the necessary environment variables. **Ensure that `NEXT_PUBLIC_APP_URL` is set to your domain.**
-
-```bash
-# /var/www/enem.octacity.org/.env.local
-
-# Supabase Configuration
-NEXT_PUBLIC_SUPABASE_URL=...
-NEXT_PUBLIC_SUPABASE_ANON_KEY=...
-SUPABASE_SERVICE_ROLE_KEY=...
-
-# Google Vision API
-GOOGLE_VISION_API_KEY=...
-GOOGLE_APPLICATION_CREDENTIALS=...
-
-# Google Gemini API
-GEMINI_API_KEY=...
-
-# App Configuration
-NEXT_PUBLIC_APP_URL=https://enem.octacity.org
-```
-
-## 8. Build the Application on the Server
-
-Build the application on the server to create the production build in the `.next` directory:
-
-```bash
-cd /var/www/enem.octacity.org
-export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 pnpm build
 ```
+This will create a `dist/` directory containing all the static assets for the application.
 
-## 9. Configure Nginx
+### 2.2. Upload Files to the Server
 
-Create an Nginx configuration file to proxy requests to the Next.js application.
-
-### 9.1. Create Nginx Configuration
-
-Create a new Nginx configuration file:
+Upload the contents of the `dist/` directory to a temporary location on your Ubuntu server.
 
 ```bash
-sudo nano /etc/nginx/sites-available/enem.octacity.org
+# Example using scp
+scp -r dist/* user@your_server_ip:/tmp/enem-essay-dist
 ```
 
-Add the following content to the file:
+### 2.3. Create Site Directory on Server
+
+Create a directory on your server where the application files will live.
+
+```bash
+# SSH into your server
+ssh user@your_server_ip
+
+# Create the directory
+sudo mkdir -p /var/www/your-subdomain.com
+
+# Move files from the temporary location
+sudo mv /tmp/enem-essay-dist/* /var/www/your-subdomain.com/
+
+# Set proper ownership
+sudo chown -R www-data:www-data /var/www/your-subdomain.com
+```
+
+## 3. NGINX Configuration for a Static Site
+
+Configure NGINX to serve the static files and handle client-side routing.
+
+### 3.1. Create NGINX Config File
+
+Create a new NGINX configuration file:
+
+```bash
+sudo nano /etc/nginx/sites-available/your-subdomain.com.conf
+```
+
+### 3.2. Add Server Block
+
+Add the following server block, which is optimized for a React single-page application:
 
 ```nginx
 server {
     listen 80;
-    server_name enem.octacity.org;
+    server_name your-subdomain.com;
+
+    root /var/www/your-subdomain.com;
+    index index.html;
 
     location / {
-        proxy_pass http://localhost:3003;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Cache static assets aggressively
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
     }
 }
 ```
 
-### 9.2. Enable the Site
+### 3.3. Enable the Site and Secure with SSL
 
-Create a symbolic link to the configuration file in the `sites-enabled` directory:
+Enable the site and use Certbot to obtain an SSL certificate and configure HTTPS.
 
 ```bash
-sudo ln -s /etc/nginx/sites-available/enem.octacity.org /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/your-subdomain.com.conf /etc/nginx/sites-enabled/
+sudo certbot --nginx -d your-subdomain.com
 ```
+Certbot will automatically update your NGINX configuration for HTTPS.
 
-### 9.3. Test and Restart Nginx
+## 4. Supabase Configuration
 
-Test the Nginx configuration and restart the service:
+**This is a critical step.** For authentication to work, you must update your Supabase project's URL configuration.
 
-```bash
-sudo nginx -t && sudo systemctl restart nginx
-```
+1.  Go to your **Supabase Dashboard**.
+2.  Navigate to **Authentication** -> **URL Configuration**.
+3.  Set the **Site URL** to your new domain: `https://your-subdomain.com`.
 
-## 10. Obtain SSL Certificate
+## 5. Testing and Verification
 
-Use Certbot to obtain a free SSL certificate from Let's Encrypt and automatically configure Nginx for HTTPS:
+1.  **Test NGINX Config**: Run `sudo nginx -t` to ensure there are no syntax errors.
+2.  **Restart NGINX**: Run `sudo systemctl restart nginx`.
+3.  **Access the Site**: Open your browser and navigate to `https://your-subdomain.com`.
+4.  **Test Authentication**: Verify that the Google OAuth login flow works correctly.
+5.  **Test Core Functionality**: Upload an essay to ensure the OCR and AI evaluation features are operational.
 
-```bash
-sudo certbot --nginx -d enem.octacity.org --non-interactive --agree-tos -m your-email@example.com
-```
-
-## 11. Start the Application
-
-Start the application using `pm2`:
-
-```bash
-cd /var/www/enem.octacity.org
-export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-pm2 start pnpm --name "enem-essay-corrector" -- start -p 3003
-```
-
-## 12. Monitoring
-
-You can monitor the application logs using the following command:
-
-```bash
-pm2 logs enem-essay-corrector
+Your application is now deployed as a secure, static site.
